@@ -3,3 +3,5 @@
 - include: db.yaml
 - include: dbx.yaml
 - include: lb.yaml
+- include: rebal_runner.yaml
+- include: rebal_target.yaml

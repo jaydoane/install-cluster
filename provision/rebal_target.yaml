@@ -1,0 +1,11 @@
+---
+- hosts: rebal_target
+  gather_facts: no
+  tasks:
+    - file: path={{ rebal_dir }}/.ssh state=directory
+    - copy: src=ssh/id_rsa.pub dest={{ rebal_dir }}/.ssh/authorized_keys
+            owner=cloudantrebal group=cloudant
+    - copy: src={{ item }} dest={{ rebal_dir }}/.ssh/ mode=0600
+            owner=cloudantrebal group=cloudant
+      with_fileglob:
+        - ./ssh/id_rsa*

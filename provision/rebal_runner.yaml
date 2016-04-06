@@ -1,0 +1,17 @@
+---
+- hosts: rebal_runner
+  gather_facts: no
+  tasks:
+    - copy: src={{ item }} dest=/root/.ssh/ mode=0600
+      with_fileglob:
+        - ssh/id_rsa*
+    - file: path=/root/.ssh/config state=touch mode=0644
+    - name: configure ssh client
+      blockinfile:
+        dest: /root/.ssh/config
+        block: |
+          Host *.{{ domain }}
+            StrictHostKeyChecking no
+            User cloudantrebal
+    - template: src=src/rebal.ini dest={{ rebal_dir }}/
+

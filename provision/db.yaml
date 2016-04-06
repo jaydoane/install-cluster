@@ -25,12 +25,6 @@
     - lineinfile: line="alias tl='tail -f /var/log/cloudant/cloudant.log'"
                   dest=/root/.bashrc
     - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
-    - copy: src=ssh/id_rsa.pub dest={{ rebal_dir }}/.ssh/authorized_keys
-            owner=cloudantrebal group=cloudant
-    - copy: src={{ item }} dest={{ rebal_dir }}/.ssh/ mode=0600
-            owner=cloudantrebal group=cloudant
-      with_fileglob:
-        - ./ssh/id_rsa*
 
     # only perform tasks below on the last node
     - block:

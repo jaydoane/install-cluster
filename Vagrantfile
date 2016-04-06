@@ -39,9 +39,9 @@ def compose_cluster(config)
   config.cluster.compose('') do |cluster|
     cluster.box = box
     cluster.domain = domain
-    compose_group('db', db_node_count, cluster)
-    compose_group('lb', lb_node_count, cluster)
-    compose_group('dbx', dbx_node_count, cluster)
+    compose_group('db', ['rebal_target'], db_node_count, cluster)
+    compose_group('lb', ['rebal_runner'], lb_node_count, cluster)
+    compose_group('dbx', ['rebal_target'], dbx_node_count, cluster)
     cluster.ansible_context_vars['db'] = lambda {|context, cnodes|
       {'db-nodes' => cnodes.map {|n|
          {'fqdn' => n.fqdn,
@@ -60,10 +60,10 @@ def compose_cluster(config)
   end
 end
 
-def compose_group(name, count, cluster)
+def compose_group(name, ansible_groups, count, cluster)
   cluster.nodes(count, name) do |group|
     group.memory = memory
-    group.ansible_groups = ['common', name]
+    group.ansible_groups = ['common', name] + ansible_groups
   end
 end
 

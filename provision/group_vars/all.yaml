@@ -1,0 +1,17 @@
+---
+admins:
+  - name: admin
+    pass: pass
+  - name: cloudant # what is this for?
+    pass: pass
+
+lb_admins: # necessary?
+  - name: admin
+    pass: pass
+
+cluster_config_path: /vagrant/cluster_dbnode.yaml
+install_dir: /root
+bin_dir: /opt/cloudant/bin
+config_dir: /opt/cloudant/.config
+cast_config_dir: /opt/cloudant/cast/etc
+rebal_dir: /opt/cloudantrebal

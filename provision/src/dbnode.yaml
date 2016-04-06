@@ -1,0 +1,15 @@
+dbnode:
+  users:
+{% for user in admins %}
+    {{ user.name }}: {{ user.pass }}
+{% endfor %}
+
+  cookie: cthulhu
+  uuid: 27d7f28b7ca51486ee824e6b6ba2453d
+  httpd_auth: openssl
+
+  quorum:
+    q: 8
+    r: 2
+    w: 2
+    n: 3

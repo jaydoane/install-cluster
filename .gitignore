@@ -1,0 +1,6 @@
+.vagrant
+cluster_dbnode.yaml
+provision/ssh/id_rsa*
+provision/installers/cloudant-*
+provision/group_vars/*.yml
+provision/host_vars/*.yml

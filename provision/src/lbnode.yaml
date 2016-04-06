@@ -1,0 +1,8 @@
+lbnode:
+  users:
+    "{{ lb_admins[0].name }}: {{ lb_admins[0].pass }}"
+  nodes:
+{% for node in db_nodes %}
+    - hostname: {{ node.fqdn }}
+      ipaddress: {{ node.ip }}
+{% endfor %}

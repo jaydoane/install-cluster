@@ -1,0 +1,50 @@
+---
+# first and last nodes of cluster perform special tasks based on the
+# host varibles is_first_node and is_last_node
+- hosts: db
+  gather_facts: no
+  vars:
+    erl_call: '{{ bin_dir }}/erl_call_cloudant'
+  tasks:
+    # the first node is configured using the dbnode.yaml template
+    # while subsequent nodes use the first node's exported cluster_dbnode.yaml 
+    - template: src=src/dbnode.yaml dest={{ config_dir }}/
+      when: is_first_node
+    - set_fact: config_path={{ config_dir }}/dbnode.yaml
+      when: is_first_node
+    - set_fact: config_path={{ cluster_config_path }}
+      when: not is_first_node
+    - debug: var=config_path
+    - command: cast system install -db -c {{ config_path }}
+               creates=/opt/cloudant/lib
+    - name: export cluster config for other db nodes
+      command: cast cluster export {{ cluster_config_path }}
+      when: is_first_node
+
+    # common to all db nodes
+    - lineinfile: line="alias tl='tail -f /var/log/cloudant/cloudant.log'"
+                  dest=/root/.bashrc
+    - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
+    - copy: src=ssh/id_rsa.pub dest={{ rebal_dir }}/.ssh/authorized_keys
+            owner=cloudantrebal group=cloudant
+    - copy: src={{ item }} dest={{ rebal_dir }}/.ssh/ mode=0600
+            owner=cloudantrebal group=cloudant
+      with_fileglob:
+        - ./ssh/id_rsa*
+
+    # only perform tasks below on the last node
+    - block:
+        - command: cast cluster add {{ item.fqdn }}
+          with_items: '{{ db_nodes }}'
+        - command: cast database init --password {{ admins[0].pass }}
+          # non-admin secondary user for testy
+        - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
+        - command: '{{ config_dir }}/create-testy-user2.sh'
+
+        # # ensure all nodes have same exact encoded admin password
+        # - command: '{{ erl_call }} -a "config get [\"admins\", \" {{ admins[0].name }}\"]"'
+        #   register: encoded_admin_pass_cmd
+        # - set_fact: encoded_admin_pass={{ encoded_admin_pass_cmd.stdout }}
+        # - debug: var=encoded_admin_pass
+        # - command: '{{ erl_call }} -a "rpc multicall [config, set, [\"admins\", \" {{ admins[0].name }}\", \"{{ encoded_admin_pass }}\"]]"'
+      when: is_last_node

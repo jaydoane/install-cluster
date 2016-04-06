@@ -1,0 +1,10 @@
+---
+# extra db nodes which will be added to cluster
+- hosts: dbx
+  gather_facts: no
+  tasks:
+    - command: cast system install -c {{ cluster_config_path }} -db
+        creates=/opt/cloudant/lib
+    - file: path={{ rebal_dir }}/.ssh state=directory
+    - copy: src=ssh/id_rsa.pub dest={{ rebal_dir }}/.ssh/authorized_keys
+        owner=cloudantrebal group=cloudant

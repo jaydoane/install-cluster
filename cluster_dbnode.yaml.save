@@ -1,0 +1,14 @@
+dbnode:
+    cookie: cthulhu
+    httpd_auth: ivegotasecret
+    quorum:
+        n: '3'
+        q: '8'
+        r: '2'
+        w: '2'
+    users:
+        admin: -pbkdf2-a0e2d9712a9b3faa914250206c487ffdd4e7aa7b,882c7b43c77787ecb1df6b5850c8cbf9,10
+        cloudant: -pbkdf2-a144a3ca27ddf82754a661e5828d6bab6ea7568a,4f1bb00b7208592a54262c3c98c43152,10
+        metrics:
+            admin: pass
+    uuid: 27d7f28b7ca51486ee824e6b6ba2453d

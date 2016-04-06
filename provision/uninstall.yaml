@@ -1,0 +1,14 @@
+---
+# uninstall any existing installer, packages and configuration
+- hosts: all
+  gather_facts: no
+  tasks:
+    - command: cast node stop
+    - name: clean up any existing expanded archive
+      file: path={{ install_dir }}/cloudant-installer state=absent
+    - name: clean up any installed repos
+      command: '{{ install_dir }}/cloudant/uninstall/uninstall.bin'
+      args:
+        removes: '{{ install_dir }}/cloudant'
+    - apt: name=cloudant-cast state=absent purge=yes
+    - apt: name=cloudant-base state=absent purge=yes

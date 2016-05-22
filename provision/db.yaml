@@ -34,4 +34,5 @@
           # non-admin secondary user for testy
         - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
         - command: '{{ config_dir }}/create-testy-user2.sh'
+        - local_action: file path=cluster_dbnode.yaml state=absent
       when: is_last_node

@@ -64,6 +64,9 @@ def compose_group(name, ansible_groups, count, cluster)
   cluster.nodes(count, name) do |group|
     group.memory = memory
     group.ansible_groups = ['common', name] + ansible_groups
+    # reduce number of routes/vboxnets to manually configure
+    group.ip = lambda {|group_index, group_name, node_index|
+      "172.31.0.#{group_index + 1}#{node_index + 1}" }
   end
 end
 

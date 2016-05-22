@@ -78,7 +78,7 @@ end
 
 def configure_vm(vm, cnode)
   vm.box = cnode.box
-  # NOTE: disconnect Cisco AnyConnect VPN for private host-only routes
+  # NOTE: exit Cisco AnyConnect VPN for private host-only routes
   # see: https://forums.virtualbox.org/viewtopic.php?f=8&t=55066
   vm.network :private_network, ip: cnode.ip
   vm.hostname = cnode.fqdn

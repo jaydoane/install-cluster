@@ -34,11 +34,4 @@
           # non-admin secondary user for testy
         - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
         - command: '{{ config_dir }}/create-testy-user2.sh'
-
-        # # ensure all nodes have same exact encoded admin password
-        # - command: '{{ erl_call }} -a "config get [\"admins\", \" {{ admins[0].name }}\"]"'
-        #   register: encoded_admin_pass_cmd
-        # - set_fact: encoded_admin_pass={{ encoded_admin_pass_cmd.stdout }}
-        # - debug: var=encoded_admin_pass
-        # - command: '{{ erl_call }} -a "rpc multicall [config, set, [\"admins\", \" {{ admins[0].name }}\", \"{{ encoded_admin_pass }}\"]]"'
       when: is_last_node

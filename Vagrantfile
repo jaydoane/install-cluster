@@ -10,6 +10,7 @@ def db_node_count() (ENV['DB_NODES'] || '3').to_i end
 def lb_node_count() (ENV['LB_NODES'] || '1').to_i end
 def dbx_node_count() (ENV['DBX_NODES'] || '0').to_i end
 def domain() ENV['DOMAIN'] || 'v' end
+def ip_prefix() ENV['IP_PREFIX'] || '172.31.0' end
 def memory() ENV['MEMORY'] || 1024 end
 def vendor() ENV['VENDOR'] || 'ubuntu' end
 def platform() ENV['PLATFORM'] || 'trusty' end
@@ -66,7 +67,7 @@ def compose_group(name, ansible_groups, count, cluster)
     group.ansible_groups = ['common', name] + ansible_groups
     # reduce number of routes/vboxnets to manually configure
     group.ip = lambda {|group_index, group_name, node_index|
-      "172.31.0.#{group_index + 1}#{node_index + 1}" }
+      "#{ip_prefix}.#{group_index + 1}#{node_index + 1}" }
   end
 end
 

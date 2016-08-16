@@ -6,6 +6,8 @@
 
 PROVISION_DIR = 'provision'
 
+NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['centos6.5']
+
 def db_node_count() (ENV['DB_NODES'] || '3').to_i end
 def lb_node_count() (ENV['LB_NODES'] || '1').to_i end
 def dbx_node_count() (ENV['DBX_NODES'] || '0').to_i end
@@ -37,6 +39,8 @@ Vagrant.configure(2) do |config|
 end
 
 def compose_cluster(config)
+  config.vbguest.auto_update = false if
+    NON_AUTO_UPDATE_VBGUEST_PLATFORMS.include?(platform)
   config.cluster.compose('') do |cluster|
     cluster.box = box
     cluster.domain = domain

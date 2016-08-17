@@ -1,6 +1,9 @@
 ---
 - include: common.yaml
 - include: db.yaml
+  when: uses_cast
+- include: db_configure.yaml
+  when: not uses_cast
 - include: dbx.yaml
 - include: lb.yaml
 - include: rebal_runner.yaml

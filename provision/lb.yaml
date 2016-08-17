@@ -5,3 +5,10 @@
     - command: cast system install -lb creates=/etc/haproxy # better path?
     - template: src=src/lbnode.yaml dest={{ cast_config_dir }}/
     - command: cast node config {{ cast_config_dir }}/lbnode.yaml
+    - lineinfile: dest=/etc/haproxy/haproxy.cfg backup=yes
+                  insertafter='^  pidfile'
+                  line='ssl-default-server-ciphers ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:AES128-SHA256:AES128-SHA:AES256-SHA256:AES256-SHA'
+    # hack to send Host header and avoid dbcore ssl crash bug
+    - lineinfile: dest=/etc/haproxy/haproxy.cfg backup=yes
+                  regexp='^  option httpchk GET'
+                  line='  option httpchk GET /_up HTTP/1.0\r\nHost:\ service.v'

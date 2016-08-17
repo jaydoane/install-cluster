@@ -6,16 +6,45 @@
 
 PROVISION_DIR = 'provision'
 
+NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['centos6.5']
+
+PLATFORM_BOX_MAP = {
+  'trusty' => 'ubuntu/trusty64',
+  'precise' => 'ubuntu/precise64',
+  'centos6.5' => 'boxcutter/centos65'}
+
+# since installer names from IBM download are horribly inconsistent,
+# we specify the installer tarball, and infer the version from its name
+INSTALLER_VERSION_MATCHER = {
+  '1.0.0.2' => /CLO_DLL_EDI_1.0/,
+  '1.0.0.3' => /1.0.0.3/,
+  '1.0.0.5' => /IBM_CLOUDANT_DATA_LAYER_LOCAL_ED/}
+
+def path_to_version(path)
+  INSTALLER_VERSION_MATCHER.each do |version, re|
+    if path =~ re
+      return version
+    end
+  end
+  return '1.0.0.5'
+end
+
 def db_node_count() (ENV['DB_NODES'] || '3').to_i end
 def lb_node_count() (ENV['LB_NODES'] || '1').to_i end
 def dbx_node_count() (ENV['DBX_NODES'] || '0').to_i end
 def domain() ENV['DOMAIN'] || 'v' end
 def ip_prefix() ENV['IP_PREFIX'] || '172.31.0' end
 def memory() ENV['MEMORY'] || 1024 end
-def vendor() ENV['VENDOR'] || 'ubuntu' end
 def platform() ENV['PLATFORM'] || 'trusty' end
-def box() "#{vendor}/#{platform}64" end
+def box() PLATFORM_BOX_MAP[platform] end
 def reinstall?() ['true', 'yes'].include?(ENV['REINSTALL']) || false end
+def installer()
+  ENV['INSTALLER'] || 
+    `cd #{PROVISION_DIR}/installers && ls -1 cloudant-*-#{platform}-*.tar.gz | tail -n1`.strip
+end
+def install_dir() File.join('/root', path_to_version(installer)) end
+def version() path_to_version(installer) end
+def uses_cast() version > '1.0.0.4' end
 
 if ['true', 'yes'].include?(ENV['LATEST'])
   `cd #{PROVISION_DIR}/installers && PLATFORM=#{platform} ./get-latest.sh`
@@ -37,6 +66,8 @@ Vagrant.configure(2) do |config|
 end
 
 def compose_cluster(config)
+  config.vbguest.auto_update = false if
+    NON_AUTO_UPDATE_VBGUEST_PLATFORMS.include?(platform)
   config.cluster.compose('') do |cluster|
     cluster.box = box
     cluster.domain = domain
@@ -47,13 +78,21 @@ def compose_cluster(config)
       {'db-nodes' => cnodes.map {|n|
          {'fqdn' => n.fqdn,
           'ip' => n.ip}}}}
+    cluster.ansible_context_vars['lb'] = lambda {|context, cnodes|
+      {'lb-nodes' => cnodes.map {|n|
+         {'fqdn' => n.fqdn,
+          'ip' => n.ip}}}}
     cluster.ansible_group_vars['common'] = lambda {|context, cnodes| 
-      {'platform' => platform}}
+      {'platform' => platform,
+       'installer' => installer,
+       'install_dir' => install_dir,
+       'uses_cast' => uses_cast}}
     cluster.ansible_group_vars['lb'] = lambda {|context, cnodes| 
       {'db_nodes' => context['db-nodes'],
        'domain' => cluster.domain}}
     cluster.ansible_group_vars['db'] = lambda {|context, cnodes| 
-      {'db_nodes' => context['db-nodes']}}
+      {'db_nodes' => context['db-nodes'],
+       'lb_nodes' => context['lb-nodes']}}
     cluster.ansible_host_vars['db'] = lambda { |context, cnode|
       {'is_first_node' => cnode.index == 0,
        'is_last_node' => cnode.index + 1 == db_node_count}} # better way?

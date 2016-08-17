@@ -1,0 +1,25 @@
+---
+- hosts: db
+  vars:
+    cloudant_dir: /root/Cloudant
+    repo_dir: '{{ cloudant_dir }}/repo'
+    erl_call: '{{ bin_dir }}/erl_call_cloudant'
+  tasks:
+    - command: ./quiet_install.sh -a -d
+               chdir={{ install_dir }}
+               creates={{ cloudant_dir }}
+    - template: src=src/configure.ini dest={{ repo_dir }}
+    - copy: src=src/configure.sh dest={{ repo_dir }}
+    - command: ./configure.sh -q chdir={{ repo_dir }}
+      ignore_errors: yes # sometimes exits with RC=7
+
+    # common to all db nodes
+    - lineinfile: line="alias tl='tail -f /var/log/cloudant/cloudant.log'"
+                  dest=/root/.bashrc
+    - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
+
+    # only perform tasks below on the last node
+    - block:
+        - command: "curl -X PUT http://localhost:5986/nodes/cloudant@{{ item.fqdn }} -d '{}'"
+          with_items: '{{ db_nodes }}'
+      when: is_last_node

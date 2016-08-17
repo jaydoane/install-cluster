@@ -1,6 +1,6 @@
 ---
 # first and last nodes of cluster perform special tasks based on the
-# host varibles is_first_node and is_last_node
+# host variables is_first_node and is_last_node
 - hosts: db
   gather_facts: no
   vars:

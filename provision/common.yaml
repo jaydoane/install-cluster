@@ -2,17 +2,19 @@
 - hosts: common
   gather_facts: no
   vars:
-    installer_cmd: 'ls -1 installers/cloudant-*-{{ platform }}-*.tar.gz | tail -n1'
-    installer: '{{ lookup("pipe", installer_cmd) }}'
     append_bin_path: 'PATH=$PATH:{{ bin_dir }}'
   tasks:
     - debug: var=installer
-    - copy: src={{ installer }} dest={{ install_dir }}/
+    - debug: var=install_dir
+    - file: path={{ install_dir }} state=directory
+    - copy: src=installers/{{ installer }} dest={{ install_dir }}/
     - unarchive: src={{ install_dir }}/{{ installer | basename }}
                  dest={{ install_dir }}/ copy=no
+                 creates={{ install_dir }}/version.txt
     - command: ./install.bin -i silent -f production.properties
                chdir={{ install_dir }}/cloudant-installer
-               creates={{ install_dir }}/cloudant/repo
+               creates=/root/cloudant
+      when: uses_cast
     - file: path={{ config_dir }} state=directory
     - lineinfile: line="alias r='sudo su - root'" dest=/home/vagrant/.bashrc
     - lineinfile: dest=/root/.bashrc line={{ append_bin_path }}

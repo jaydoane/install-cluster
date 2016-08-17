@@ -29,25 +29,25 @@ def path_to_version(path)
   return '1.0.0.5'
 end
 
-def db_node_count() (ENV['DB_NODES'] || '3').to_i end
-def lb_node_count() (ENV['LB_NODES'] || '1').to_i end
-def dbx_node_count() (ENV['DBX_NODES'] || '0').to_i end
-def domain() ENV['DOMAIN'] || 'v' end
-def ip_prefix() ENV['IP_PREFIX'] || '172.31.0' end
-def memory() ENV['MEMORY'] || 1024 end
-def platform() ENV['PLATFORM'] || 'trusty' end
+def db_node_count() (ENV['db_nodes'] || '3').to_i end
+def lb_node_count() (ENV['lb_nodes'] || '1').to_i end
+def dbx_node_count() (ENV['dbx_nodes'] || '0').to_i end
+def domain() ENV['domain'] || 'v' end
+def ip_prefix() ENV['ip_prefix'] || '172.31.0' end
+def memory() ENV['memory'] || 1024 end
+def platform() ENV['platform'] || 'trusty' end
 def box() PLATFORM_BOX_MAP[platform] end
-def reinstall?() ['true', 'yes'].include?(ENV['REINSTALL']) || false end
+def reinstall?() ['true', 'yes'].include?(ENV['reinstall']) || false end
 def installer()
-  ENV['INSTALLER'] || 
+  ENV['installer'] || 
     `cd #{PROVISION_DIR}/installers && ls -1 cloudant-*-#{platform}-*.tar.gz | tail -n1`.strip
 end
 def install_dir() File.join('/root', path_to_version(installer)) end
 def version() path_to_version(installer) end
 def uses_cast() version > '1.0.0.4' end
 
-if ['true', 'yes'].include?(ENV['LATEST'])
-  `cd #{PROVISION_DIR}/installers && PLATFORM=#{platform} ./get-latest.sh`
+if ['true', 'yes'].include?(ENV['latest'])
+  `cd #{PROVISION_DIR}/installers && platform=#{platform} ./get-latest.sh`
 end
 `cd #{PROVISION_DIR}/ssh && ./ensure-keypair.sh`
 

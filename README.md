@@ -24,4 +24,4 @@ VirtualBox installed.
 
 - `vagrant box add https://atlas.hashicorp.com/ubuntu/boxes/trusty64`
   or change to whichever platform you want
-- `LATEST=yes vagrant up`
+- `latest=yes vagrant up`

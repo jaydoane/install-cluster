@@ -89,6 +89,7 @@ def compose_cluster(config)
        'uses_cast' => uses_cast}}
     cluster.ansible_group_vars['lb'] = lambda {|context, cnodes| 
       {'db_nodes' => context['db-nodes'],
+       'lb_nodes' => context['lb-nodes'],
        'domain' => cluster.domain}}
     cluster.ansible_group_vars['db'] = lambda {|context, cnodes| 
       {'db_nodes' => context['db-nodes'],

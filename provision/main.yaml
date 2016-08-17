@@ -6,5 +6,8 @@
   when: not uses_cast
 - include: dbx.yaml
 - include: lb.yaml
+  when: uses_cast
+- include: lb_configure.yaml
+  when: not uses_cast
 - include: rebal_runner.yaml
 - include: rebal_target.yaml

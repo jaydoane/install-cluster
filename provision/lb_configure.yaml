@@ -1,0 +1,13 @@
+---
+- hosts: lb
+  vars:
+    cloudant_dir: /root/Cloudant
+    repo_dir: '{{ cloudant_dir }}/repo'
+  tasks:
+    - command: ./quiet_install.sh -a -l
+               chdir={{ install_dir }}
+               creates={{ cloudant_dir }}
+    - template: src=src/configure.ini dest={{ repo_dir }}
+    - copy: src=src/configure.sh dest={{ repo_dir }}
+    - command: ./configure.sh -q chdir={{ repo_dir }}
+      ignore_errors: yes # sometimes exits with RC=7

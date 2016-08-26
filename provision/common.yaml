@@ -17,5 +17,6 @@
       when: uses_cast
     - file: path={{ config_dir }} state=directory
     - lineinfile: line="alias r='sudo su - root'" dest=/home/vagrant/.bashrc
+    - file: path=/root/.bashrc state=touch
     - lineinfile: dest=/root/.bashrc line={{ append_bin_path }}
     - lineinfile: dest=/home/vagrant/.bashrc line={{ append_bin_path }}

@@ -6,7 +6,7 @@
 
 PROVISION_DIR = 'provision'
 
-NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['centos6.5']
+NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['el6', 'sles12']
 
 PLATFORM_BOX_MAP = {
   'trusty' => 'ubuntu/trusty64',

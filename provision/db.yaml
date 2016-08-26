@@ -24,6 +24,8 @@
     # common to all db nodes
     - lineinfile: line="alias tl='tail -f /var/log/cloudant/cloudant.log'"
                   dest=/root/.bashrc
+    - lineinfile: line="alias tlc='tail -f /var/log/cloudant/cloudant-svlogd/current'"
+                  dest=/root/.bashrc
     - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
 
     # only perform tasks below on the last node

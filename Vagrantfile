@@ -44,7 +44,7 @@ end
 def db_node_count() (ENV['db_nodes'] || '3').to_i end
 def lb_node_count() (ENV['lb_nodes'] || '1').to_i end
 def dbx_node_count() (ENV['dbx_nodes'] || '0').to_i end
-def domain() ENV['domain'] || 'v' end
+def domain() ENV['domain'] || platform end
 def ip_prefix() ENV['ip_prefix'] || PLATFORMS[platform][:ip_prefix] end
 def memory() ENV['memory'] || 1024 end
 def platform() ENV['platform'] || 'trusty' end

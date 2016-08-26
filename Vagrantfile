@@ -8,6 +8,8 @@ PROVISION_DIR = 'provision'
 
 NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['el6', 'sles12']
 
+DEV_VERSION = '1.1.0'
+
 PLATFORMS = {
   'precise' => {
     :box => 'ubuntu/precise64',
@@ -38,7 +40,7 @@ def path_to_version(path)
       return version
     end
   end
-  return '1.0.0.5'
+  return DEV_VERSION
 end
 
 def db_node_count() (ENV['db_nodes'] || '3').to_i end

@@ -8,10 +8,22 @@ PROVISION_DIR = 'provision'
 
 NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['el6', 'sles12']
 
-PLATFORM_BOX_MAP = {
-  'trusty' => 'ubuntu/trusty64',
-  'precise' => 'ubuntu/precise64',
-  'centos6.5' => 'boxcutter/centos65'}
+PLATFORMS = {
+  'precise' => {
+    :box => 'ubuntu/precise64',
+    :ip_prefix => '172.31.1'},
+  'trusty' => {
+    :box => 'ubuntu/trusty64',
+    :ip_prefix => '172.31.2'},
+  'el6' => {
+    :box => 'boxcutter/centos65',
+    :ip_prefix => '172.31.3'},
+  'el7' => {
+    :box => 'centos/7',
+    :ip_prefix => '172.31.4'},
+  'sles12' => {
+    :box => 'elastic/sles-12-x86_64',
+    :ip_prefix => '172.31.5'}}
 
 # since installer names from IBM download are horribly inconsistent,
 # we specify the installer tarball, and infer the version from its name
@@ -33,10 +45,10 @@ def db_node_count() (ENV['db_nodes'] || '3').to_i end
 def lb_node_count() (ENV['lb_nodes'] || '1').to_i end
 def dbx_node_count() (ENV['dbx_nodes'] || '0').to_i end
 def domain() ENV['domain'] || 'v' end
-def ip_prefix() ENV['ip_prefix'] || '172.31.0' end
+def ip_prefix() ENV['ip_prefix'] || PLATFORMS[platform][:ip_prefix] end
 def memory() ENV['memory'] || 1024 end
 def platform() ENV['platform'] || 'trusty' end
-def box() PLATFORM_BOX_MAP[platform] end
+def box() PLATFORMS[platform][:box] end
 def reinstall?() ['true', 'yes'].include?(ENV['reinstall']) || false end
 def installer()
   ENV['installer'] || 

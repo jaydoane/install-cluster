@@ -137,7 +137,6 @@ def configure_vm(vm, cnode)
   vm.hostname = cnode.fqdn
   vm.provision :hostmanager
   vm.provider :virtualbox do |vb|
-    vb.name = cnode.boxname
     vb.memory = cnode.memory
     vb.cpus = cnode.cpus
     vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/

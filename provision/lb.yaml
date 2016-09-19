@@ -1,7 +1,9 @@
 ---
 - hosts: lb
-  gather_facts: no
+  gather_facts: yes
   tasks:
+    - yum: name=epel-release state=latest
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
     - command: cast system install -lb creates=/etc/haproxy # better path?
     - template: src=src/lbnode.yaml dest={{ cast_config_dir }}/
     - command: cast node config {{ cast_config_dir }}/lbnode.yaml

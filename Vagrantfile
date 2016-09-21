@@ -80,6 +80,7 @@ Vagrant.configure(2) do |config|
 end
 
 def compose_cluster(config)
+  config.vm.synced_folder '.', '/vagrant', type: 'virtualbox'
   config.vbguest.auto_update = false if
     NON_AUTO_UPDATE_VBGUEST_PLATFORMS.include?(platform)
   config.cluster.compose('') do |cluster|

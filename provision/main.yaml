@@ -1,13 +1,13 @@
 ---
 - include: common.yaml
 - include: db.yaml
-  when: uses_cast
+  when: is_cast_installer
 - include: db_configure.yaml
-  when: not uses_cast
+  when: not is_cast_installer
 - include: dbx.yaml
 - include: lb.yaml
-  when: uses_cast
+  when: is_cast_installer
 - include: lb_configure.yaml
-  when: not uses_cast
+  when: not is_cast_installer
 - include: rebal_runner.yaml
 - include: rebal_target.yaml

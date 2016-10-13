@@ -15,7 +15,7 @@
         - command: ./install.bin -i silent -f production.properties
                    chdir={{ install_dir }}/cloudant-installer
                    creates=/root/cloudant
-          when: uses_cast
+          when: is_cast_installer
       when: not is_binary_installer
     - command: ./{{ installer }} -- -s
                chdir={{ install_dir }}

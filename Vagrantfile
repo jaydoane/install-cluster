@@ -58,7 +58,7 @@ def installer()
 end
 def install_dir() File.join('/root', path_to_version(installer)) end
 def version() path_to_version(installer) end
-def uses_cast() version > '1.0.0.4' end
+def is_cast_installer() version > '1.0.0.4' end
 def is_binary_installer() installer.end_with? 'bin' end
 
 if ['true', 'yes'].include?(ENV['latest'])
@@ -103,7 +103,7 @@ def compose_cluster(config)
        'installer' => installer,
        'install_dir' => install_dir,
        'is_binary_installer' => is_binary_installer,
-       'uses_cast' => uses_cast}}
+       'is_cast_installer' => is_cast_installer}}
     cluster.ansible_group_vars['lb'] = lambda {|context, cnodes| 
       {'db_nodes' => context['db-nodes'],
        'lb_nodes' => context['lb-nodes'],

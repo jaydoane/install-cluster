@@ -2,5 +2,6 @@
 cluster_dbnode.yaml
 provision/ssh/id_rsa*
 provision/installers/*.tar.gz
+provision/installers/*.bin
 provision/group_vars/*.yml
 provision/host_vars/*.yml

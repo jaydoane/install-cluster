@@ -54,11 +54,12 @@ def box() PLATFORMS[platform][:box] end
 def reinstall?() ['true', 'yes'].include?(ENV['reinstall']) || false end
 def installer()
   ENV['installer'] || 
-    `cd #{PROVISION_DIR}/installers && ls -1 cloudant-*-#{platform}-*.tar.gz | tail -n1`.strip
+    `cd #{PROVISION_DIR}/installers && ls cloudant-latest-#{platform}-x86_64.bin`.strip
 end
 def install_dir() File.join('/root', path_to_version(installer)) end
 def version() path_to_version(installer) end
 def uses_cast() version > '1.0.0.4' end
+def is_binary_installer() installer.end_with? 'bin' end
 
 if ['true', 'yes'].include?(ENV['latest'])
   `cd #{PROVISION_DIR}/installers && platform=#{platform} ./get-latest.sh`
@@ -101,6 +102,7 @@ def compose_cluster(config)
       {'platform' => platform,
        'installer' => installer,
        'install_dir' => install_dir,
+       'is_binary_installer' => is_binary_installer,
        'uses_cast' => uses_cast}}
     cluster.ansible_group_vars['lb'] = lambda {|context, cnodes| 
       {'db_nodes' => context['db-nodes'],

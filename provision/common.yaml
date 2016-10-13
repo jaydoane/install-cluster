@@ -7,14 +7,19 @@
     - debug: var=installer
     - debug: var=install_dir
     - file: path={{ install_dir }} state=directory
-    - copy: src=installers/{{ installer }} dest={{ install_dir }}/
-    - unarchive: src={{ install_dir }}/{{ installer | basename }}
-                 dest={{ install_dir }}/ copy=no
-                 creates={{ install_dir }}/version.txt
-    - command: ./install.bin -i silent -f production.properties
-               chdir={{ install_dir }}/cloudant-installer
-               creates=/root/cloudant
-      when: uses_cast
+    - copy: src=installers/{{ installer }} dest={{ install_dir }}/ mode=0755
+    - block:
+        - unarchive: src={{ install_dir }}/{{ installer | basename }}
+                     dest={{ install_dir }}/ copy=no
+                     creates={{ install_dir }}/version.txt
+        - command: ./install.bin -i silent -f production.properties
+                   chdir={{ install_dir }}/cloudant-installer
+                   creates=/root/cloudant
+          when: uses_cast
+      when: not is_binary_installer
+    - command: ./{{ installer }} -- -s
+               chdir={{ install_dir }}
+      when: is_binary_installer
     - file: path={{ config_dir }} state=directory
     - lineinfile: line="alias r='sudo su - root'" dest=/home/vagrant/.bashrc
     - file: path=/root/.bashrc state=touch

@@ -21,6 +21,7 @@
       when: not is_binary_installer
     - command: ./{{ installer }} -- -s
                chdir={{ install_dir }}
+               creates=/usr/bin/cast
       when: is_binary_installer
     - file: path={{ config_dir }} state=directory
     - lineinfile: line="alias r='sudo su - root'" dest=/home/vagrant/.bashrc

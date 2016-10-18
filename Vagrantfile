@@ -6,7 +6,7 @@
 
 PROVISION_DIR = 'provision'
 
-NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['el6', 'sles12']
+NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['sles12']
 
 DEV_VERSION = '1.1.0'
 
@@ -18,7 +18,7 @@ PLATFORMS = {
     :box => 'ubuntu/trusty64',
     :ip_prefix => '172.31.2'},
   'el6' => {
-    :box => 'boxcutter/centos65',
+    :box => 'centos/6',
     :ip_prefix => '172.31.3'},
   'el7' => {
     :box => 'centos/7',

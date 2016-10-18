@@ -7,6 +7,8 @@
     - debug: var=installer
     - debug: var=install_dir
     - file: path={{ install_dir }} state=directory
+    - yum: name=libselinux-python
+      when: ansible_distribution == 'CentOS'
     - copy: src=installers/{{ installer }} dest={{ install_dir }}/ mode=0755
     - block:
         - unarchive: src={{ install_dir }}/{{ installer | basename }}

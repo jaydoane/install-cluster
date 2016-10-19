@@ -37,4 +37,5 @@
         - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
         - command: '{{ config_dir }}/create-testy-user2.sh'
         - local_action: file path={{playbook_dir}}/../cluster_dbnode.yaml state=absent
+          when: not "{{ lookup('env','USER') }}" == 'jenkins'
       when: is_last_node

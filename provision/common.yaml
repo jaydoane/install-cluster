@@ -1,6 +1,6 @@
 ---
 - hosts: common
-  gather_facts: yes # needed for trusty workaround
+  gather_facts: yes # needed for ansible_distribution, etc.
   vars:
     append_bin_path: 'PATH=$PATH:{{ bin_dir }}'
   tasks:
@@ -28,9 +28,3 @@
     - file: path=/root/.bashrc state=touch
     - lineinfile: dest=/root/.bashrc line={{ append_bin_path }}
     - lineinfile: dest=/home/vagrant/.bashrc line={{ append_bin_path }}
-
-    # workaround for dependency bug on trusty
-    - block:
-        - apt: name=libffi-dev
-        - apt: name=libssl-dev autoremove=yes
-      when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'

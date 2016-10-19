@@ -13,19 +13,19 @@ DEV_VERSION = '1.1.0'
 PLATFORMS = {
   'precise' => {
     :box => 'ubuntu/precise64',
-    :ip_prefix => '172.31.1'},
+    :ip_index => 1},
   'trusty' => {
     :box => 'ubuntu/trusty64',
-    :ip_prefix => '172.31.2'},
+    :ip_index => 2},
   'el6' => {
     :box => 'centos/6',
-    :ip_prefix => '172.31.3'},
+    :ip_index => 3},
   'el7' => {
     :box => 'centos/7',
-    :ip_prefix => '172.31.4'},
+    :ip_index => 4},
   'sles12' => {
     :box => 'elastic/sles-12-x86_64',
-    :ip_prefix => '172.31.5'}}
+    :ip_index => 5}}
 
 # since installer names from IBM download are horribly inconsistent,
 # we specify the installer tarball, and infer the version from its name
@@ -46,8 +46,10 @@ end
 def db_node_count() (ENV['db_nodes'] || '3').to_i end
 def lb_node_count() (ENV['lb_nodes'] || '1').to_i end
 def dbx_node_count() (ENV['dbx_nodes'] || '0').to_i end
-def domain() ENV['domain'] || platform end
-def ip_prefix() ENV['ip_prefix'] || PLATFORMS[platform][:ip_prefix] end
+def user() ENV['USER'] end
+def domain() ENV['domain'] || "#{platform}.#{user}" end
+def ip_prefix() ENV['ip_prefix'] || '172.31' end
+def ip_platform_prefix() "#{ip_prefix}.#{PLATFORMS[platform][:ip_index]}" end
 def memory() ENV['memory'] || 1024 end
 def platform() ENV['platform'] || 'trusty' end
 def box() PLATFORMS[platform][:box] end
@@ -124,7 +126,7 @@ def compose_group(name, ansible_groups, count, cluster)
     group.ansible_groups = ['common', name] + ansible_groups
     # reduce number of routes/vboxnets to manually configure
     group.ip = lambda {|group_index, group_name, node_index|
-      "#{ip_prefix}.#{group_index + 1}#{node_index + 1}" }
+      "#{ip_platform_prefix}.#{group_index + 1}#{node_index + 1}" }
   end
 end
 

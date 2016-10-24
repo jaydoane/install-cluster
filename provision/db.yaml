@@ -32,7 +32,7 @@
     - block:
         - command: cast cluster add {{ item.fqdn }}
           with_items: '{{ db_nodes }}'
-        - command: cast database init --password {{ admins[0].pass }}
+        - command: cast database init -y --password {{ admins[0].pass }}
           # non-admin secondary user for testy
         - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
         - command: '{{ config_dir }}/create-testy-user2.sh'

@@ -51,6 +51,7 @@ def domain() ENV['domain'] || "#{platform}.#{user}" end
 def ip_prefix() ENV['ip_prefix'] || '172.31' end
 def ip_platform_prefix() "#{ip_prefix}.#{PLATFORMS[platform][:ip_index]}" end
 def memory() ENV['memory'] || 1024 end
+def cpus() ENV['cpus'] || 1 end
 def platform() ENV['platform'] || 'trusty' end
 def box() PLATFORMS[platform][:box] end
 def reinstall?() ['true', 'yes'].include?(ENV['reinstall']) || false end
@@ -123,6 +124,7 @@ end
 def compose_group(name, ansible_groups, count, cluster)
   cluster.nodes(count, name) do |group|
     group.memory = memory
+    group.cpus = cpus
     group.ansible_groups = ['common', name] + ansible_groups
     # reduce number of routes/vboxnets to manually configure
     group.ip = lambda {|group_index, group_name, node_index|

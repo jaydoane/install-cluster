@@ -148,7 +148,7 @@ def configure_vm(vm, cnode)
   vm.provider :virtualbox do |vb|
     vb.memory = cnode.memory
     vb.cpus = cnode.cpus
-    vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+    # vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
   end
 end
 

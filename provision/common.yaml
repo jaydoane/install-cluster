@@ -7,7 +7,9 @@
     - debug: var=installer
     - debug: var=install_dir
     - file: path={{ install_dir }} state=directory
-    - yum: name=libselinux-python
+    - block:
+        - yum: name=libselinux-python
+        - yum: name=epel-release
       when: ansible_distribution == 'CentOS'
     - copy: src=installers/{{ installer }} dest={{ install_dir }}/ mode=0755
     - block:

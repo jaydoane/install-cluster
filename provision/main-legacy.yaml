@@ -1,0 +1,4 @@
+---
+- include: common.yaml
+- include: db-legacy.yaml
+- include: lb-legacy.yaml

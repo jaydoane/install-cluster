@@ -78,7 +78,8 @@ Vagrant.configure(2) do |config|
     config.vm.define cnode.boxname do |node|
       configure_vm(node.vm, cnode)
       provision('uninstall', node, config) if reinstall?
-      provision('main', node, config)
+      main = is_cast_installer ? 'main' : 'main-legacy'
+      provision(main, node, config)
     end
   end
 end

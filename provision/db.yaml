@@ -46,4 +46,9 @@
         - command: '{{ config_dir }}/create-testy-user2.sh'
         - local_action: file path={{playbook_dir}}/../cluster_dbnode.yaml state=absent
           when: not "{{ lookup('env','USER') }}" == 'jenkins'
+
+        - command: '{{ erl_call }} -a "mem3 nodes"'
+          register: mem3_nodes
+        - fail: msg='db nodes are not clustered'
+          when: '{{ mem3_nodes.stdout.split(",") | length }} != {{ db_nodes | length}}'
       when: is_last_node

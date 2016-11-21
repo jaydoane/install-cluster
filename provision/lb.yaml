@@ -6,6 +6,10 @@
     - template: src=src/lbnode.yaml dest={{ cast_config_dir }}/
     - command: cast node config {{ cast_config_dir }}/lbnode.yaml
 
+    - replace: |
+        dest=/opt/cloudant/etc/mustgather.ini regexp="^nodes:"
+        replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
+
     # workaround for haproxy bug on precise
     - block:
         - replace: dest=/etc/haproxy/haproxy.cfg

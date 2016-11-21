@@ -10,6 +10,9 @@
         dest=/opt/cloudant/etc/mustgather.ini regexp="^nodes:"
         replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
 
+    - name: ensure rebal works
+      command: rebal -h
+
     # workaround for haproxy bug on precise
     - block:
         - replace: dest=/etc/haproxy/haproxy.cfg

@@ -28,6 +28,10 @@
                   dest=/root/.bashrc
     - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
 
+    # unfortunately, currently only -h exits with rc 0
+    - name: ensure weatherreport works
+      shell: PATH=$PATH:/opt/cloudant/bin weatherreport -h
+
     # only perform tasks below on the last node
     - block:
         - command: cast cluster add {{ item.fqdn }}

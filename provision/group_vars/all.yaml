@@ -11,6 +11,7 @@ lb_admins: # necessary?
 
 cluster_config_path: /vagrant/cluster_dbnode.yaml
 bin_dir: /opt/cloudant/bin
+venv_bin_dir: /opt/cloudant/venv/bin
 config_dir: /opt/cloudant/.config
 cast_config_dir: /opt/cloudant/cast/etc
 rebal_dir: /opt/cloudantrebal

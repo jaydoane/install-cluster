@@ -1,6 +1,8 @@
 ---
 - hosts: lb
   gather_facts: yes
+  environment:
+    PATH: '{{ ansible_env.PATH }}:{{ venv_bin_dir }}'
   tasks:
     - command: cast system install -lb creates=/etc/haproxy # better path?
     - template: src=src/lbnode.yaml dest={{ cast_config_dir }}/

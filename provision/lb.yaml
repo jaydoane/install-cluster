@@ -10,6 +10,9 @@
         dest=/opt/cloudant/etc/mustgather.ini regexp="^nodes:"
         replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
 
+    - name: ensure mustgather works
+      command: mustgather -h
+
     - name: ensure rebal works
       command: rebal -h
 

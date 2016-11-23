@@ -109,9 +109,8 @@ def compose_cluster(config)
        'is_binary_installer' => is_binary_installer,
        'is_cast_installer' => is_cast_installer,
        'db_nodes' => context['db-nodes'],
-       'lb_nodes' => context['lb-nodes']}}
-    cluster.ansible_group_vars['lb'] = lambda {|context, cnodes| 
-      {'domain' => cluster.domain}}
+       'lb_nodes' => context['lb-nodes'],
+       'domain' => cluster.domain}}
     cluster.ansible_host_vars['db'] = lambda { |context, cnode|
       {'is_first_node' => cnode.index == 0,
        'is_last_node' => cnode.index + 1 == db_node_count}} # better way?

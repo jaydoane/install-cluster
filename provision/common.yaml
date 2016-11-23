@@ -30,3 +30,19 @@
     - file: path=/root/.bashrc state=touch
     - lineinfile: dest=/root/.bashrc line={{ append_bin_path }}
     - lineinfile: dest=/home/vagrant/.bashrc line={{ append_bin_path }}
+
+    # configure root ssh keys
+    - file: path=/root/.ssh state=directory
+    - copy: src={{ item }} dest=/root/.ssh/ mode=0600
+      with_fileglob:
+        - ssh/id_rsa*
+    - copy: src=ssh/id_rsa.pub dest=/root/.ssh/authorized_keys
+            owner=root group=root
+    - file: path=/root/.ssh/config state=touch mode=0644
+    - name: configure ssh client
+      blockinfile:
+        dest: /root/.ssh/config
+        block: |
+          Host *.{{ domain }}
+            StrictHostKeyChecking no
+            User root

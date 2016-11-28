@@ -6,7 +6,7 @@
   vars:
     erl_call: '{{ bin_dir }}/erl_call_cloudant'
   environment:
-    PATH: '{{ ansible_env.PATH }}:{{ venv_bin_dir }}'
+    PATH: '{{ ansible_env.PATH }}:{{ cast_venv_bin_dir }}'
   tasks:
     # the first node is configured using the dbnode.yaml template
     # while subsequent nodes use the first node's exported cluster_dbnode.yaml 

@@ -13,7 +13,7 @@
         replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
 
     - name: ensure mustgather works
-      command: mustgather -h
+      command: mustgather creates=mustgather-*.tar.gz
 
     - name: ensure rebal works
       command: rebal -h

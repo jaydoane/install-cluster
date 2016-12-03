@@ -3,5 +3,5 @@
 - hosts: dbx
   gather_facts: no
   tasks:
-    - command: cast system install -c {{ cluster_config_path }} -db
-        creates=/opt/cloudant/lib
+    - command: cast system install -db -c {{ cluster_config_path }}
+               creates=/opt/cloudant/lib

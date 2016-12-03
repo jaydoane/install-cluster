@@ -50,8 +50,6 @@
           # non-admin secondary user for testy
         - template: src=src/create-testy-user2.sh dest={{ config_dir }}/ mode=0755
         - command: '{{ config_dir }}/create-testy-user2.sh'
-        - local_action: file path={{playbook_dir}}/../cluster_dbnode.yaml state=absent
-          when: not "{{ lookup('env','USER') }}" == 'jenkins'
 
         - command: '{{ erl_call }} -a "mem3 nodes"'
           register: mem3_nodes

@@ -34,6 +34,12 @@
     - name: ensure weatherreport works
       shell: PATH=$PATH:/opt/cloudant/bin weatherreport -h
 
+    - name: ensure db logging works
+      command: wc /var/log/cloudant/cloudant.log
+      ignore_errors: yes
+      register: wc_cloudant_log
+    - debug: var=wc_cloudant_log.stdout
+
     # only perform tasks below on the last node
     - block:
         - command: cast cluster add {{ item.fqdn }}

@@ -86,6 +86,7 @@ end
 
 def compose_cluster(config)
   config.vm.synced_folder '.', '/vagrant', type: 'virtualbox'
+  config.vbguest.installer = EL7Installer if platform == 'el7'
   config.vbguest.auto_update = false if
     NON_AUTO_UPDATE_VBGUEST_PLATFORMS.include?(platform)
   config.cluster.compose('') do |cluster|
@@ -154,5 +155,17 @@ def provision(file_prefix, node, config)
     # a.limit = 'all' # enable parallel provisioning
     a.playbook = "#{PROVISION_DIR}/#{file_prefix}.yaml"
     a.groups = config.cluster.ansible_groups
+  end
+end
+
+# needed to build Virtualbox Guest Additions on centos/7
+class EL7Installer < VagrantVbguest::Installers::Linux
+  def install(opts=nil, &block)
+    ftp_url = 'ftp://fr2.rpmfind.net/linux/centos/7.2.1511/updates/x86_64/Packages'
+    el7_kernel_devel_rpm = 'kernel-devel-3.10.0-327.36.3.el7.x86_64.rpm'
+    communicate.sudo("curl -O #{ftp_url}/#{el7_kernel_devel_rpm}", opts, &block)
+    communicate.sudo('yum -y groupinstall "Development Tools"', opts, &block)
+    communicate.sudo("yum -y localinstall #{el7_kernel_devel_rpm}", opts, &block)
+    super
   end
 end

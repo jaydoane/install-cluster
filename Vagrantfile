@@ -52,21 +52,17 @@ def ip_prefix() ENV['ip_prefix'] || '172.31' end
 def ip_platform_prefix() "#{ip_prefix}.#{PLATFORMS[platform][:ip_index]}" end
 def memory() ENV['memory'] || 1024 end
 def cpus() ENV['cpus'] || 1 end
+def build() ENV['build'] || 'latest' end
 def platform() ENV['platform'] || 'trusty' end
 def box() PLATFORMS[platform][:box] end
 def reinstall?() ['true', 'yes'].include?(ENV['reinstall']) || false end
-def installer()
-  ENV['installer'] || 
-    `cd #{PROVISION_DIR}/installers && ls cloudant-latest-#{platform}-x86_64.bin`.strip
-end
+def installer() ENV['installer'] || "cloudant-#{build}-#{platform}-x86_64.bin" end
 def install_dir() File.join('/root', path_to_version(installer)) end
 def version() path_to_version(installer) end
 def is_cast_installer() version > '1.0.0.4' end
 def is_binary_installer() installer.end_with? 'bin' end
 
-if ['true', 'yes'].include?(ENV['latest'])
-  `cd #{PROVISION_DIR}/installers && platform=#{platform} ./get-latest.sh`
-end
+`cd #{PROVISION_DIR}/installers && platform=#{platform} build=#{build} ./sync-installer` if not ENV['installer']
 `cd #{PROVISION_DIR}/ssh && ./ensure-keypair.sh`
 
 

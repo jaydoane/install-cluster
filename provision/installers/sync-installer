@@ -1,0 +1,14 @@
+#!/bin/bash -ex
+
+build=${build-latest}
+platform=${platform-trusty}
+arch=${arch-x86_64}
+installer=cloudant-$build-$platform-$arch.bin
+
+if [ $build == latest ]; then
+    path=$installer
+else
+    path=$build/$installer
+fi
+
+s3cmd sync s3://cloudant-local/builds/$path ./

@@ -70,9 +70,9 @@ Vagrant.configure(2) do |config|
   compose_cluster(config)
   config.cluster.debug
   configure_hostmanager(config)
-  config.cluster.nodes.each do |cnode| # aka "composed_node"
-    config.vm.define cnode.boxname do |node|
-      configure_vm(node.vm, cnode)
+  config.cluster.nodes.each do |composed_node|
+    config.vm.define composed_node.boxname do |node|
+      configure_vm(node.vm, composed_node)
       provision('uninstall', node, config) if reinstall?
       main = is_cast_installer ? 'main' : 'main-legacy'
       provision(main, node, config)
@@ -91,15 +91,15 @@ def compose_cluster(config)
     compose_group('db', ['rebal_target'], db_node_count, cluster)
     compose_group('lb', ['rebal_runner'], lb_node_count, cluster)
     compose_group('dbx', ['rebal_target'], dbx_node_count, cluster)
-    cluster.ansible_context_vars['db'] = lambda {|context, cnodes|
-      {'db-nodes' => cnodes.map {|n|
+    cluster.ansible_context_vars['db'] = lambda {|context, composed_nodes|
+      {'db-nodes' => composed_nodes.map {|n|
          {'fqdn' => n.fqdn,
           'ip' => n.ip}}}}
-    cluster.ansible_context_vars['lb'] = lambda {|context, cnodes|
-      {'lb-nodes' => cnodes.map {|n|
+    cluster.ansible_context_vars['lb'] = lambda {|context, composed_nodes|
+      {'lb-nodes' => composed_nodes.map {|n|
          {'fqdn' => n.fqdn,
           'ip' => n.ip}}}}
-    cluster.ansible_group_vars['common'] = lambda {|context, cnodes| 
+    cluster.ansible_group_vars['common'] = lambda {|context, composed_nodes| 
       {'platform' => platform,
        'installer' => installer,
        'install_dir' => install_dir,
@@ -108,9 +108,9 @@ def compose_cluster(config)
        'db_nodes' => context['db-nodes'],
        'lb_nodes' => context['lb-nodes'],
        'domain' => cluster.domain}}
-    cluster.ansible_host_vars['db'] = lambda { |context, cnode|
-      {'is_first_node' => cnode.index == 0,
-       'is_last_node' => cnode.index + 1 == db_node_count}} # better way?
+    cluster.ansible_host_vars['db'] = lambda { |context, composed_node|
+      {'is_first_node' => composed_node.index == 0,
+       'is_last_node' => composed_node.index + 1 == db_node_count}} # better way?
     cluster.ansible_playbook_path = File.join(Dir.pwd, PROVISION_DIR)
   end
 end
@@ -132,16 +132,16 @@ def configure_hostmanager(config)
   config.hostmanager.include_offline = true
 end
 
-def configure_vm(vm, cnode)
-  vm.box = cnode.box
+def configure_vm(vm, composed_node)
+  vm.box = composed_node.box
   # NOTE: exit Cisco AnyConnect VPN for private host-only routes
   # see: https://forums.virtualbox.org/viewtopic.php?f=8&t=55066
-  vm.network :private_network, ip: cnode.ip
-  vm.hostname = cnode.fqdn
+  vm.network :private_network, ip: composed_node.ip
+  vm.hostname = composed_node.fqdn
   vm.provision :hostmanager
   vm.provider :virtualbox do |vb|
-    vb.memory = cnode.memory
-    vb.cpus = cnode.cpus
+    vb.memory = composed_node.memory
+    vb.cpus = composed_node.cpus
     # vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
   end
 end

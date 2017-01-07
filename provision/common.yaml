@@ -46,3 +46,10 @@
           Host *.{{ domain }}
             StrictHostKeyChecking no
             User root
+
+    # work around cast bug in trusty 1.0.0.5
+    - block:
+        - apt: name=python-dev
+        - apt: name=libffi-dev
+        - apt: name=libssl-dev
+      when: ansible_distribution == 'Ubuntu' and version == '1.0.0.5'

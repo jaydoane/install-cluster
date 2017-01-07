@@ -102,6 +102,7 @@ def compose_cluster(config)
     cluster.ansible_group_vars['common'] = lambda {|context, composed_nodes| 
       {'platform' => platform,
        'installer' => installer,
+       'version' => version,
        'install_dir' => install_dir,
        'is_binary_installer' => is_binary_installer,
        'is_cast_installer' => is_cast_installer,

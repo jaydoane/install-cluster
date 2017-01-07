@@ -26,7 +26,7 @@ PLATFORMS = {
     :ip_index => 5}}
 
 # since installer names from IBM download are horribly inconsistent,
-# we specify the installer tarball, and infer the version from its name
+# we may have to infer the version from its name
 INSTALLER_VERSION_MATCHER = {
   '1.0.0.2' => /CLO_DLL_EDI_1.0/,
   '1.0.0.3' => /1.0.0.3/,
@@ -36,7 +36,9 @@ LATEST_VERSION = '1.1.0'
 
 def path_to_version(path)
   INSTALLER_VERSION_MATCHER.each do |version, re|
-    if path =~ re
+    if path.include? version
+      return version
+    elsif path =~ re
       return version
     end
   end

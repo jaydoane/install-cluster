@@ -8,8 +8,6 @@ PROVISION_DIR = 'provision'
 
 NON_AUTO_UPDATE_VBGUEST_PLATFORMS = ['sles12']
 
-DEV_VERSION = '1.1.0'
-
 PLATFORMS = {
   'precise' => {
     :box => 'ubuntu/precise64',
@@ -34,13 +32,15 @@ INSTALLER_VERSION_MATCHER = {
   '1.0.0.3' => /1.0.0.3/,
   '1.0.0.5' => /IBM_CLOUDANT_DATA_LAYER_LOCAL_ED/}
 
+LATEST_VERSION = '1.1.0'
+
 def path_to_version(path)
   INSTALLER_VERSION_MATCHER.each do |version, re|
     if path =~ re
       return version
     end
   end
-  return DEV_VERSION
+  return LATEST_VERSION
 end
 
 def db_node_count() (ENV['db_nodes'] || '3').to_i end

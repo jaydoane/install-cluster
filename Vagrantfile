@@ -28,9 +28,10 @@ PLATFORMS = {
 # since installer names from IBM download are horribly inconsistent,
 # we may have to infer the version from its name
 INSTALLER_VERSION_MATCHER = {
-  '1.0.0.2' => /CLO_DLL_EDI_1.0/,
-  '1.0.0.3' => /1.0.0.3/,
-  '1.0.0.5' => /IBM_CLOUDANT_DATA_LAYER_LOCAL_ED/}
+  '1.1.0'   => nil,
+  '1.0.0.5' => /IBM_CLOUDANT_DATA_LAYER_LOCAL_ED/,
+  '1.0.0.3' => nil,
+  '1.0.0.2' => /CLO_DLL_EDI_1.0/}
 
 LATEST_VERSION = '1.1.0'
 

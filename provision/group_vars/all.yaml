@@ -15,5 +15,4 @@ cast_venv_bin_dir: /opt/cloudant/cast/venv/bin
 mustgather_venv_bin_dir: /opt/cloudant/mustgather/venv/bin
 rebal_venv_bin_dir: /opt/cloudant/rebal/venv/bin
 config_dir: /opt/cloudant/.config
-cast_config_dir: /opt/cloudant/cast/etc
 rebal_dir: /opt/cloudantrebal

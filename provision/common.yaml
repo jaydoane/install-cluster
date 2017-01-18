@@ -53,3 +53,7 @@
         - apt: name=libffi-dev
         - apt: name=libssl-dev
       when: ansible_distribution == 'Ubuntu' and version == '1.0.0.5'
+
+    # work around dependency conflict in el6 1.0.0.2
+    - yum: name=python-argparse state=absent
+      when: ansible_distribution == 'CentOS' and version == '1.0.0.2'

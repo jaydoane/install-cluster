@@ -161,9 +161,9 @@ end
 # needed to build Virtualbox Guest Additions on centos/7
 class EL7Installer < VagrantVbguest::Installers::Linux
   def install(opts=nil, &block)
-    ftp_url = 'ftp://fr2.rpmfind.net/linux/centos/7.2.1511/updates/x86_64/Packages'
+    url = 'http://vault.centos.org/7.2.1511/updates/x86_64/Packages'
     el7_kernel_devel_rpm = 'kernel-devel-3.10.0-327.36.3.el7.x86_64.rpm'
-    communicate.sudo("curl -O #{ftp_url}/#{el7_kernel_devel_rpm}", opts, &block)
+    communicate.sudo("curl -O #{url}/#{el7_kernel_devel_rpm}", opts, &block)
     communicate.sudo('yum -y groupinstall "Development Tools"', opts, &block)
     communicate.sudo("yum -y localinstall #{el7_kernel_devel_rpm}", opts, &block)
     super

@@ -52,6 +52,9 @@
         - apt: name=python-dev
         - apt: name=libffi-dev
         - apt: name=libssl-dev
+        - apt: name=python-pip
+        - command: pip install pip --upgrade
+        - command: pip2.7 install argparse colorama paramiko retrying
       when: ansible_distribution == 'Ubuntu' and version == '1.0.0.5'
 
     # work around dependency conflict in el6 1.0.0.2

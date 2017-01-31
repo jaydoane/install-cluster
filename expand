@@ -1,0 +1,10 @@
+#!/bin/bash -ex
+
+# wrapper around ansible-playbook using vagrant configuration
+
+new_node=${new_node-dbx1}
+
+ansible-playbook provision/expand.yaml -u vagrant \
+    --private-key=.vagrant/machines/db1/virtualbox/ \
+    -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    -e "new_node=$new_node"

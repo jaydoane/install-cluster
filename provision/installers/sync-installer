@@ -1,11 +1,16 @@
 #!/bin/bash -ex
 
-build=${build-latest}
-platform=${platform-trusty}
-arch=${arch-x86_64}
-installer=cloudant-$build-$platform-$arch.bin
+if [ -z "$installer" ]; then
+    build=${build-latest}
+    platform=${platform-trusty}
+    arch=${arch-x86_64}
+    installer=cloudant-$build-$platform-$arch.bin
+else
+    IFS='-' read -a tokens <<< $installer
+    build=${tokens[1]}-${tokens[2]}
+fi
 
-if [ $build == latest ]; then
+if [ "$build" == latest ]; then
     path=$installer
 else
     path=$build/$installer

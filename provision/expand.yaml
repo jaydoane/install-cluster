@@ -11,6 +11,6 @@
   tasks:
     - command: cp /opt/cloudantrebal/rebal.ini /root/
     - file: path=/root/rebaldir state=directory
-    - command: rebal plan expand {{ new_node }}.{{ domain }}
-    - command: rebal run rebalance_plan
+    - shell: PATH=$PATH:/opt/cloudant/bin rebal plan expand {{ new_node }}.{{ domain }}
+    - shell: PATH=$PATH:/opt/cloudant/bin rebal run rebalance_plan
     # TODO: reconfigure haproxy

@@ -15,6 +15,7 @@
 
     - name: ensure mustgather works
       command: mustgather creates=mustgather-*.tar.gz
+      when: not (ansible_distribution_release == 'precise' and version == '1.0.0.5')
 
     - name: ensure rebal works
       command: rebal -h

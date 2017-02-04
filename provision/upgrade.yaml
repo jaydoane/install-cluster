@@ -1,0 +1,77 @@
+---
+- hosts: db
+  gather_facts: yes
+  vars:
+    cloudant_debs: 'cloudant-base cloudant-cast cloudant-db cloudant-dbnode cloudant-metrics cloudant-mustgather cloudant-rebal cloudant-search libcsmap-cloudant libgeos-cloudant-3.4.2 libleveldb-cloudant libsnappy-cloudant libspatialindex-cloudant'
+  tasks:
+    - debug: var=upgrade_installer
+    - debug: var=upgrade_install_dir
+    - command: cast node maintenance --true
+    - command: cast node stop
+    - shell: ps -ef | grep cloudant | grep -v grep | awk '{print $2}' | xargs kill
+      ignore_errors: yes
+
+    - file: path={{ upgrade_install_dir }} state=directory
+    - copy: src=installers/{{ upgrade_installer }} dest={{ upgrade_install_dir }}/
+            mode=0755
+
+    # work around (intermittent?) package dependency bug on precise
+    - block:
+        - command: dpkg --remove --force-remove-reinstreq {{ cloudant_debs }}
+          ignore_errors: yes
+        - command: apt-get -y update
+          ignore_errors: yes
+        - command: apt-get -y purge {{ cloudant_debs }}
+          ignore_errors: yes
+        - command: dpkg -l '*cloudant*'
+          ignore_errors: yes
+          register: out
+        - debug: var=out.stdout_lines
+      when: ansible_distribution_release == 'precise'
+    - command: cast system uninstall
+      when: ansible_distribution_release != 'precise'
+
+    - command: /root/cloudant/uninstall/uninstall.bin removes=/root/cloudant
+    - command: mv /opt/cloudant /opt/cloudant_old removes=/opt/cloudant
+    - command: mv /var/log/cloudant /var/log/cloudant_old removes=/var/log/cloudant
+
+    - command: ./{{ upgrade_installer }} -- -s
+               chdir={{ upgrade_install_dir }}
+               creates=/opt/cloudant/cast
+      register: out
+    - debug: var=out.stdout_lines
+    - command: cast system install -db -c /opt/cloudant_old/.config/dbnode.yaml
+               creates=/opt/cloudant/lib
+      register: out
+    - debug: var=out.stdout_lines
+    - command: cast node maintenance --false
+
+- hosts: lb
+  gather_facts: yes
+  tasks:
+    - command: cast node stop
+    - command: cast system uninstall removes=/etc/haproxy/
+    - command: /root/cloudant/uninstall/uninstall.bin removes=/root/cloudant
+
+    - file: path={{ upgrade_install_dir }} state=directory
+    - copy: src=installers/{{ upgrade_installer }}
+            dest={{ upgrade_install_dir }}/ mode=0755
+    - command: ./{{ upgrade_installer }} -- -s
+               chdir={{ upgrade_install_dir }}
+               creates=/opt/cloudant/cast/venv # something better?
+      register: out
+    - debug: var=out.stdout_lines
+    - debug: var=out.stderr_lines
+    - command: cast system install -lb
+               creates=/opt/cloudant/dashboard
+      register: out
+    - debug: var=out.stdout_lines
+    - command: cast node config {{ config_dir }}/lbnode.yaml
+
+    # work around haproxy bug on precise
+    - block:
+        - replace: dest=/etc/haproxy/haproxy.cfg
+                   regexp='^  bind [*]:80'
+                   replace='#  bind *:80'
+        - command: cast node restart
+      when: ansible_distribution_release == 'precise'

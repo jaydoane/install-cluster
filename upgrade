@@ -1,0 +1,15 @@
+#!/bin/bash -ex
+
+# wrapper around ansible-playbook using vagrant configuration
+
+[ -n "$installer" ] || { echo 'installer must be set'; exit 1; }
+
+IFS='-' read -a tokens <<< $installer
+version=${tokens[1]}
+
+(cd provision/installers && installer=$installer ./sync-installer)
+
+ansible-playbook provision/upgrade.yaml -u vagrant \
+    --private-key=.vagrant/machines/db1/virtualbox/ \
+    -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    -e "upgrade_installer=$installer upgrade_install_dir=/root/$version"

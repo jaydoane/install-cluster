@@ -26,4 +26,4 @@
                    regexp='^  bind [*]:80'
                    replace='#  bind *:80'
         - command: cast node restart
-      when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'precise'
+      when: ansible_distribution_release == 'precise'

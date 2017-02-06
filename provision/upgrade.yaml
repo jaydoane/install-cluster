@@ -32,15 +32,13 @@
       when: ansible_distribution_release != 'precise'
 
     - command: /root/cloudant/uninstall/uninstall.bin removes=/root/cloudant
-    - command: mv /opt/cloudant /opt/cloudant_old removes=/opt/cloudant
-    - command: mv /var/log/cloudant /var/log/cloudant_old removes=/var/log/cloudant
 
     - command: ./{{ upgrade_installer }} -- -s
                chdir={{ upgrade_install_dir }}
                creates=/opt/cloudant/cast/venv
       register: out
     - debug: var=out.stdout_lines
-    - command: cast system install -db -c /opt/cloudant_old/.config/dbnode.yaml
+    - command: cast system install -db -c {{ config_dir }}/dbnode.yaml
                creates=/opt/cloudant/lib
       register: out
     - debug: var=out.stdout_lines

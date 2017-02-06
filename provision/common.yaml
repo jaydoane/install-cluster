@@ -55,7 +55,7 @@
         - apt: name=python-pip
         - command: pip install pip --upgrade
         - command: pip2.7 install argparse colorama paramiko retrying
-      when: ansible_distribution == 'Ubuntu' and version == '1.0.0.5'
+      when: ansible_distribution_release == 'trusty' and version == '1.0.0.5'
 
     # work around dependency conflict in el6 1.0.0.2
     - yum: name=python-argparse state=absent

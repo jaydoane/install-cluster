@@ -68,10 +68,4 @@
     - debug: var=out.stdout_lines
     - command: cast node config {{ config_dir }}/lbnode.yaml
 
-    # work around haproxy bug on precise
-    - block:
-        - replace: dest=/etc/haproxy/haproxy.cfg
-                   regexp='^  bind [*]:80'
-                   replace='#  bind *:80'
-        - command: cast node restart
-      when: ansible_distribution_release == 'precise'
+    - include: work-around-precise-haproxy.yaml

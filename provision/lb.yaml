@@ -16,17 +16,10 @@
     - name: ensure mustgather works
       command: mustgather creates=mustgather-*.tar.gz
       when: not (ansible_distribution_release == 'precise' and version == '1.0.0.5')
+    - include: work-around-precise-haproxy.yaml
 
     - name: ensure rebal works
       command: rebal -h
-
-    # workaround for haproxy bug on precise
-    - block:
-        - replace: dest=/etc/haproxy/haproxy.cfg
-                   regexp='^  bind [*]:80'
-                   replace='#  bind *:80'
-        - command: cast node restart
-      when: ansible_distribution_release == 'precise'
 
     - name: ensure dashboard available
       shell: curl localhost/dashboard.html | grep "Cloudant Dashboard"

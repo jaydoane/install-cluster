@@ -37,7 +37,7 @@
 
     - command: ./{{ upgrade_installer }} -- -s
                chdir={{ upgrade_install_dir }}
-               creates=/opt/cloudant/cast
+               creates=/opt/cloudant/cast/venv
       register: out
     - debug: var=out.stdout_lines
     - command: cast system install -db -c /opt/cloudant_old/.config/dbnode.yaml

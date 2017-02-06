@@ -54,3 +54,10 @@
       when: is_last_node
 
     - include: verify-db.yaml
+
+    - include: verify-firewall.yaml
+      vars:
+        ports:
+          - 9000
+          - 4369
+          - 5984

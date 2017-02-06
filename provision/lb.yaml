@@ -12,6 +12,7 @@
     - replace: |
         dest=/opt/cloudant/etc/mustgather.ini regexp='^nodes:$'
         replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
+      when: version >= '1.1.0'
 
     - include: work-around-precise-haproxy.yaml
 

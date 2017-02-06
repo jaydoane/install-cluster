@@ -4,3 +4,4 @@
 
 - name: verify db log exists and is non-empty
   shell: '[ -s /var/log/cloudant/cloudant.log ]'
+  when: version >= '1.1.0'

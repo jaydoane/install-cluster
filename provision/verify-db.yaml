@@ -1,0 +1,6 @@
+---
+# currently only -h exits with rc 0 -- sad!
+- shell: PATH=$PATH:/opt/cloudant/bin weatherreport -h
+
+- name: verify db log exists and is non-empty
+  shell: '[ -s /var/log/cloudant/cloudant.log ]'

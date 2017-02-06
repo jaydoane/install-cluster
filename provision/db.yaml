@@ -30,16 +30,6 @@
                   dest=/root/.bashrc
     - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
 
-    # unfortunately, currently only -h exits with rc 0
-    - name: ensure weatherreport works
-      shell: PATH=$PATH:/opt/cloudant/bin weatherreport -h
-
-    - name: ensure db logging works
-      command: wc /var/log/cloudant/cloudant.log
-      ignore_errors: yes
-      register: wc_cloudant_log
-    - debug: var=wc_cloudant_log.stdout
-
     # only perform tasks below on the last node
     - block:
         - command: cast cluster add {{ item.fqdn }}
@@ -62,3 +52,5 @@
         - fail: msg='db nodes are not clustered'
           when: '{{ mem3_nodes.stdout.split(",") | length }} != {{ db_nodes | length}}'
       when: is_last_node
+
+    - include: verify-db.yaml

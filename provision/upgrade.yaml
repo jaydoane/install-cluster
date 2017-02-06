@@ -46,6 +46,9 @@
     - debug: var=out.stdout_lines
     - command: cast node maintenance --false
 
+    - include: verify-db.yaml
+
+
 - hosts: lb
   gather_facts: yes
   tasks:

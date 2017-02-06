@@ -69,3 +69,5 @@
     - command: cast node config {{ config_dir }}/lbnode.yaml
 
     - include: work-around-precise-haproxy.yaml
+
+    - include: verify-lb.yaml

@@ -1,0 +1,7 @@
+---
+- command: mustgather creates=mustgather-*.tar.gz
+  when: not (ansible_distribution_release == 'precise' and version == '1.0.0.5')
+
+- shell: PATH=$PATH:/opt/cloudant/bin rebal -h
+
+- shell: curl localhost/dashboard.html | grep "Cloudant Dashboard"

@@ -6,3 +6,7 @@
   when: version >= '1.1.0'
 
 - shell: curl localhost/dashboard.html | grep "Cloudant Dashboard"
+  register: result
+  until: result|success
+  retries: 10
+  delay: 1

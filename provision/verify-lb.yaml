@@ -10,3 +10,6 @@
   until: result|success
   retries: 10
   delay: 1
+
+- include: verify-firewall.yaml
+  vars: {ports: [80, 443]}

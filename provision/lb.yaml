@@ -17,9 +17,3 @@
     - include: work-around-precise-haproxy.yaml
 
     - include: verify-lb.yaml
-
-    - include: verify-firewall.yaml
-      vars:
-        ports:
-          - 80
-          - 443

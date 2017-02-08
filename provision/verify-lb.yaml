@@ -1,8 +1,8 @@
 ---
-- command: mustgather creates=mustgather-*.tar.gz
+- shell: PATH=$PATH:{{ bin_dir }} mustgather creates=mustgather-*.tar.gz
   when: version >= '1.1.0'
 
-- shell: PATH=$PATH:/opt/cloudant/bin rebal -h
+- shell: PATH=$PATH:{{ bin_dir }} rebal -h
   when: version >= '1.1.0'
 
 - shell: curl localhost/dashboard.html | grep "Cloudant Dashboard"

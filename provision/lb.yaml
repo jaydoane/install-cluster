@@ -15,5 +15,6 @@
       when: version >= '1.1.0'
 
     - include: work-around-precise-haproxy.yaml
+    - include: work-around-el6-selinux.yaml
 
     - include: verify-lb.yaml

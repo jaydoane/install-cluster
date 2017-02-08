@@ -2,7 +2,7 @@
 - hosts: lb
   gather_facts: yes
   environment:
-    PATH: '{{ ansible_env.PATH }}:{{ cast_venv_bin_dir }}:{{ mustgather_venv_bin_dir }}:{{ rebal_venv_bin_dir }}'
+    PATH: '{{ ansible_env.PATH }}:{{ bin_dir }}'
   tasks:
     - debug: var=config_dir
     - command: cast system install -lb creates=/etc/haproxy # better path?

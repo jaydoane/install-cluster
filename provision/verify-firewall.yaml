@@ -4,7 +4,7 @@
     - command: systemctl enable SuSEfirewall2.service
     - command: systemctl start SuSEfirewall2.service
     - command: yast firewall services add tcpport=22 zone=EXT
-  when: ansible_distribution == 'Suse'
+  when: ansible_distribution == 'SLES'
 
 - command: cast system firewall --open
 

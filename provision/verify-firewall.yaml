@@ -15,3 +15,7 @@
 
 - shell: iptables -nL | grep -v {{ item }}
   with_items: '{{ ports }}'
+
+# leave firewall up and ports open because --close does not
+# terminate firewall on all platforms (e.g. el7, sles12)
+- command: cast system firewall --open

@@ -4,9 +4,9 @@
 - hosts: db
   gather_facts: no
   vars:
-    erl_call: '{{ bin_dir }}/erl_call_cloudant'
+    erl_call: erl_call_cloudant
   environment:
-    PATH: '{{ ansible_env.PATH }}:{{ cast_venv_bin_dir }}'
+    PATH: '{{ ansible_env.PATH }}:{{ bin_dir }}'
   tasks:
     # the first node is configured using the dbnode.yaml template
     # while subsequent nodes use the first node's exported cluster_dbnode.yaml 
@@ -30,16 +30,6 @@
                   dest=/root/.bashrc
     - command: '{{ erl_call }} -a "config set [\"log\", \"level\", \"notice\"]"'
 
-    # unfortunately, currently only -h exits with rc 0
-    - name: ensure weatherreport works
-      shell: PATH=$PATH:/opt/cloudant/bin weatherreport -h
-
-    - name: ensure db logging works
-      command: wc /var/log/cloudant/cloudant.log
-      ignore_errors: yes
-      register: wc_cloudant_log
-    - debug: var=wc_cloudant_log.stdout
-
     # only perform tasks below on the last node
     - block:
         - command: cast cluster add {{ item.fqdn }}
@@ -62,3 +52,5 @@
         - fail: msg='db nodes are not clustered'
           when: '{{ mem3_nodes.stdout.split(",") | length }} != {{ db_nodes | length}}'
       when: is_last_node
+
+    - include: verify-db.yaml

@@ -1,0 +1,21 @@
+---
+# sles12 firewall blocks port 22 by default, so we open it
+- block:
+    - command: systemctl enable SuSEfirewall2.service
+    - command: systemctl start SuSEfirewall2.service
+    - command: yast firewall services add tcpport=22 zone=EXT
+  when: ansible_distribution == 'SLES'
+
+- command: cast system firewall --open
+
+- shell: iptables -nL | grep {{ item }}
+  with_items: '{{ ports }}'
+
+- command: cast system firewall --close
+
+- shell: iptables -nL | grep -v {{ item }}
+  with_items: '{{ ports }}'
+
+# leave firewall up and ports open because --close does not
+# terminate firewall on all platforms (e.g. el7, sles12)
+- command: cast system firewall --open

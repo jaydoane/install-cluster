@@ -1,0 +1,10 @@
+---
+# currently only -h exits with rc 0 -- sad!
+- shell: PATH=$PATH:{{ bin_dir }} weatherreport -h
+
+- name: verify db log exists and is non-empty
+  shell: '[ -s /var/log/cloudant/cloudant.log ]'
+  when: version >= '1.1.0'
+
+- include: verify-firewall.yaml
+  vars: {ports: [9000, 4369, 5984]}

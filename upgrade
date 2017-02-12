@@ -4,7 +4,7 @@
 
 [ -n "$installer" ] || { echo 'installer must be set'; exit 1; }
 
-IFS='-' read -a tokens <<< $installer
+tokens=(${installer//-/ })
 version=${tokens[1]}
 
 (cd provision/installers && installer=$installer ./sync-installer)

@@ -32,19 +32,20 @@
       when: ansible_distribution_release != 'precise'
 
     - command: /root/cloudant/uninstall/uninstall.bin removes=/root/cloudant
-    - command: mv /opt/cloudant /opt/cloudant_old removes=/opt/cloudant
-    - command: mv /var/log/cloudant /var/log/cloudant_old removes=/var/log/cloudant
 
     - command: ./{{ upgrade_installer }} -- -s
                chdir={{ upgrade_install_dir }}
-               creates=/opt/cloudant/cast
+               creates=/opt/cloudant/cast/venv
       register: out
     - debug: var=out.stdout_lines
-    - command: cast system install -db -c /opt/cloudant_old/.config/dbnode.yaml
+    - command: cast system install -db -c {{ config_dir }}/dbnode.yaml
                creates=/opt/cloudant/lib
       register: out
     - debug: var=out.stdout_lines
     - command: cast node maintenance --false
+
+    - include: verify-db.yaml
+
 
 - hosts: lb
   gather_facts: yes
@@ -68,10 +69,6 @@
     - debug: var=out.stdout_lines
     - command: cast node config {{ config_dir }}/lbnode.yaml
 
-    # work around haproxy bug on precise
-    - block:
-        - replace: dest=/etc/haproxy/haproxy.cfg
-                   regexp='^  bind [*]:80'
-                   replace='#  bind *:80'
-        - command: cast node restart
-      when: ansible_distribution_release == 'precise'
+    - include: work-around-precise-haproxy.yaml
+
+    - include: verify-lb.yaml

@@ -6,7 +6,7 @@ if [ -z "$installer" ]; then
     arch=${arch-x86_64}
     installer=cloudant-$build-$platform-$arch.bin
 else
-    IFS='-' read -a tokens <<< $installer
+    tokens=(${installer//-/ })
     build=${tokens[1]}-${tokens[2]}
 fi
 

@@ -2,7 +2,7 @@
 - hosts: lb
   gather_facts: yes
   environment:
-    PATH: '{{ ansible_env.PATH }}:{{ cast_venv_bin_dir }}:{{ mustgather_venv_bin_dir }}:{{ rebal_venv_bin_dir }}'
+    PATH: '{{ ansible_env.PATH }}:{{ bin_dir }}'
   tasks:
     - debug: var=config_dir
     - command: cast system install -lb creates=/etc/haproxy # better path?
@@ -12,21 +12,9 @@
     - replace: |
         dest=/opt/cloudant/etc/mustgather.ini regexp='^nodes:$'
         replace="nodes: {{ ', '.join((db_nodes + lb_nodes) | map(attribute='fqdn') | list) }}"
+      when: version >= '1.1.0'
 
-    - name: ensure mustgather works
-      command: mustgather creates=mustgather-*.tar.gz
-      when: not (ansible_distribution_release == 'precise' and version == '1.0.0.5')
+    - include: work-around-precise-haproxy.yaml
+    - include: work-around-el6-selinux.yaml
 
-    - name: ensure rebal works
-      command: rebal -h
-
-    # workaround for haproxy bug on precise
-    - block:
-        - replace: dest=/etc/haproxy/haproxy.cfg
-                   regexp='^  bind [*]:80'
-                   replace='#  bind *:80'
-        - command: cast node restart
-      when: ansible_distribution_release == 'precise'
-
-    - name: ensure dashboard available
-      shell: curl localhost/dashboard.html | grep "Cloudant Dashboard"
+    - include: verify-lb.yaml

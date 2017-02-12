@@ -1,0 +1,13 @@
+---
+# SELinux to allow port 5656 on el6 1.0.0.5
+- block:
+    - command: yum install -y -q python27 python27-pip policycoreutils-python
+    - command: semanage port -a -t http_port_t -p tcp 5656
+    - uri: url=http://localhost/dashboard.html
+      register: result
+      until: result|success
+      retries: 20
+      delay: 1
+  when: >
+    ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6' and
+    version == '1.0.0.5'

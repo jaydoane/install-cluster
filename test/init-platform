@@ -1,0 +1,9 @@
+#!/bin/bash -ex
+
+platform=$1
+mkdir -p platforms/$platform
+rsync -aPW --exclude test --exclude .vagrant \
+      --exclude installers/*.bin --exclude installers/*.tar.gz \
+      ../* platforms/$platform/
+rsync --delete-excluded -aPW testy platforms/$platform/
+cp overlay/* platforms/$platform/

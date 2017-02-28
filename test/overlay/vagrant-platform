@@ -1,0 +1,6 @@
+#!/bin/bash -ex
+
+# thin wrapper around vagrant to set platform based on cwd
+
+curdir=${PWD##*/}
+platform=$curdir vagrant "$@"

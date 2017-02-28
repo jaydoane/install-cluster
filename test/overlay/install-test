@@ -1,0 +1,8 @@
+#!/bin/bash -ex
+
+. ../../venv/bin/activate
+build=${build-latest} cpus=2 memory=2048 ./vagrant-platform up
+./gen-testy-config > testy_config.json
+testy_config=`readlink -f testy_config.json`
+(cd testy && ./runtesty.py -f suites/standard_suite_local.json -f $testy_config)
+./vagrant-platform destroy -f

@@ -1,0 +1,15 @@
+#!/bin/bash -ex
+
+if [ ! -d testy ]; then
+    git clone -b local-1.1.0 git@github.com:cloudant/testy.git testy
+fi
+
+if [ ! -d venv ]; then
+    virtualenv venv
+fi
+
+. venv/bin/activate
+pip install --upgrade pip
+pip install ansible==2.1.1.0
+pip install s3cmd
+pip install -r testy/requirements.txt

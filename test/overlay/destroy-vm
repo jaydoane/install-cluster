@@ -1,0 +1,3 @@
+#!/bin/bash -ex
+vm=$1
+VBoxManage controlvm $vm poweroff && VBoxManage unregistervm $vm --delete

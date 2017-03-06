@@ -1,0 +1,18 @@
+#!/bin/bash -ex
+
+lb_ip=`./vagrant-platform status | grep lb1 | head -1 | awk '{print $5}'`
+
+cat <<EOF
+{
+    "cloudant_context": "cloudant_local",
+    "replicate_with_https": false,
+
+    "db_user1_user": "admin",
+    "db_user1_pass": "pass",
+    "db_user1_root": "http://${lb_ip}",
+
+    "db_user2_user": "cloudant",
+    "db_user2_pass": "pass",
+    "db_user2_root": "http://${lb_ip}"
+}
+EOF

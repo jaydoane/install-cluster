@@ -85,6 +85,7 @@ end
 
 def compose_cluster(config)
   config.vm.synced_folder '.', '/vagrant', type: 'virtualbox'
+  config.vbguest.installer = EL6Installer if platform == 'el6'
   config.vbguest.installer = EL7Installer if platform == 'el7'
   config.vbguest.auto_update = false if
     NON_AUTO_UPDATE_VBGUEST_PLATFORMS.include?(platform)
@@ -158,14 +159,29 @@ def provision(file_prefix, node, config)
   end
 end
 
-# needed to build Virtualbox Guest Additions on centos/7
+
+def install_kernel_devel_rpm(url, rpm, opts, &block)
+    communicate.sudo("curl -O #{url}/#{rpm}", opts, &block)
+    communicate.sudo('yum -y groupinstall "Development Tools"', opts, &block)
+    communicate.sudo("yum -y localinstall #{rpm}", opts, &block)
+end
+
+# to build Virtualbox Guest Additions on centos/6
+class EL6Installer < VagrantVbguest::Installers::Linux
+  def install(opts=nil, &block)
+    install_kernel_devel_rpm(
+      'http://vault.centos.org/6.8/updates/x86_64/Packages',
+      'kernel-devel-2.6.32-642.4.2.el6.x86_64.rpm', opts, &block)
+    super
+  end
+end
+
+# to build Virtualbox Guest Additions on centos/7
 class EL7Installer < VagrantVbguest::Installers::Linux
   def install(opts=nil, &block)
-    url = 'http://vault.centos.org/7.2.1511/updates/x86_64/Packages'
-    el7_kernel_devel_rpm = 'kernel-devel-3.10.0-327.36.3.el7.x86_64.rpm'
-    communicate.sudo("curl -O #{url}/#{el7_kernel_devel_rpm}", opts, &block)
-    communicate.sudo('yum -y groupinstall "Development Tools"', opts, &block)
-    communicate.sudo("yum -y localinstall #{el7_kernel_devel_rpm}", opts, &block)
+    install_kernel_devel_rpm(
+      'http://vault.centos.org/7.2.1511/updates/x86_64/Packages',
+      'kernel-devel-3.10.0-327.36.3.el7.x86_64.rpm', opts, &block)
     super
   end
 end
